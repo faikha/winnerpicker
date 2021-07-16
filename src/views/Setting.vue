@@ -13,6 +13,10 @@
         />
         <div class="error" v-if="errors.title.length">{{ errors.title }}</div>
       </div>
+      <div class="form-item">
+        <label><input type="radio" v-model="hideTitleState" name="typeSource" value=false>Show</label>
+        <label><input type="radio" v-model="hideTitleState" name="typeSource" value=true>Hide</label>
+      </div>
       
       <div class="form-item">
         <label>Font color</label>
@@ -233,6 +237,7 @@ export default {
       source: null,
       validate: false,
       submitMessage: "",
+      hideTitleState: false,
       typeShowContestant: "show",
       backgroundImage:"",
       errors: {
