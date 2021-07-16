@@ -2,10 +2,10 @@
   <div>
     <link :href="`https://fonts.googleapis.com/css?family=${family.css}`" rel="stylesheet"/>
 
-    <div class="pt-10" v-bind:style="{color: fontColor,fontFamily: family.name}">
-      <div class="grid text-center">
+    <div class="pt-5" v-bind:style="{color: fontColor,fontFamily: family.name}">
+      <div class="grid h-40 text-center">
         <!-- Title  -->
-        <div class="pt-10 pb-24 text-6xl">{{ title }}</div>
+        <div class="transform " :class="'translate-y-'+ titleTranslateY +' '+ titleFontSize.class" v-show="!hideTitleState" >{{ title }}</div>
       </div>
 
       <div class="flex">
@@ -13,7 +13,7 @@
           <img class="max-h-64 m-auto mb-8" :src="prizeImage" />
           <div v-if="prizeDescription" class="">
             <div class="text-xl">{{ prizeUnits }} Units</div>
-            <div class="text-3xl">{{ prizeDescription }}</div>
+            <div class="" v-bind:class="[prizesFontSize.class]">{{ prizeDescription }}</div>
           </div>
         </div>
         <!-- roller  -->
@@ -25,7 +25,7 @@
           <div class="text-4xl" v-if="!name">...</div>
         </div>
         <div class="flex-1">
-          <div class="text-xl ml-24 ">LIST PEMENANG :</div>
+          <div class="ml-24" v-bind:class="[winnersFontSize.class]">LIST PEMENANG :</div>
           <!-- List of pick winners -->
           <div
             class="ml-24"
@@ -80,6 +80,10 @@ export default {
       url: "",
       title: "",
       fontColor: "",
+      titleFontSize: {},
+      prizesFontSize: {},
+      winnersFontSize: {},
+      titleTranslateY: 10,
       family: {},
       prizes: [],
       prizeImage: "",
@@ -98,6 +102,7 @@ export default {
       hideDownloadState: true,
       hideNextPrize: true,
       hidePickAllWinner: false,
+      hideTitleState: false,
       winners: [],
       winnerlist: [{winners:[]}],
       count: 0,
@@ -108,6 +113,7 @@ export default {
   },
   created() {
     this.getSetting();
+    
   },
 
   
@@ -264,9 +270,16 @@ export default {
         this.prizeImage = setting.prizes[0].prizeImage;
         this.prizeUnits = setting.prizes[0].prizeUnits;
         this.prizeDescription = setting.prizes[0].prizeDescription;
+        this.titleFontSize = setting.titleFontSize;
+        this.prizesFontSize = setting.prizesFontSize;
+        this.winnersFontSize = setting.winnersFontSize;
+        if(setting.hideTitleState == 'true'){
+          this.hideTitleState = true;
+        } else {
+          this.hideTitleState = false;
+        }
 
-        
-        //console.log(setting);
+        console.log(this.hideTitleState);
         if (this.backgroundImage) {
           document.body.style.backgroundImage = `url(${this.backgroundImage})`;
         }

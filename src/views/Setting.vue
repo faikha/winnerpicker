@@ -17,27 +17,76 @@
         <label><input type="radio" v-model="hideTitleState" name="typeSource" value=false>Show</label>
         <label><input type="radio" v-model="hideTitleState" name="typeSource" value=true>Hide</label>
       </div>
-      
-      <div class="form-item">
-        <label>Font color</label>
-        <input
-          id="fontColor"
-          type="color"
-          v-model="fontColor"
-          placeholder="Font Color"
-        />
-      </div>
+      <div class="flex">
+        <div class="form-item flex-1">
+          <label>Title Font Size</label>
+          <select v-model="titleFontSize" v-bind:value="fontSize.class" name="titleFontSize" id="titleFontSize" style="color:black">
+            <option
+              v-for="(font, index) of fontSize" 
+              :key="index"
+              :value="font"
+              >          
+            {{font.size}}</option>
+          </select>
+        </div>
 
-      <div class="form-item">
-        <label>Font Family</label>
-        <select v-model="family" v-bind:value="family.name" name="fontFamily" id="fontFamily" style="color:black">
-          <option
-            v-for="(font, index) of families" 
-            :key="index"
-            :value="font"
-            >          
-          {{font.name}}</option>
-        </select>
+        <div class="form-item flex-1">
+          <label>Prizes Font Size</label>
+          <select v-model="prizesFontSize" v-bind:value="fontSize.class" name="prizesFontSize" id="prizesFontSize" style="color:black">
+            <option
+              v-for="(font, index) of fontSize" 
+              :key="index"
+              :value="font"
+              >          
+            {{font.size}}</option>
+          </select>
+        </div>
+
+        <div class="form-item flex-1">
+          <label>Name Roller Font Size</label>
+          <select v-model="rollerFontSize" v-bind:value="fontSize.class" name="rollerFontSize" id="rollerFontSize" style="color:black">
+            <option
+              v-for="(font, index) of fontSize" 
+              :key="index"
+              :value="font"
+              >          
+            {{font.size}}</option>
+          </select>
+        </div>
+
+        <div class="form-item flex-1">
+          <label>Winner List Font Size</label>
+          <select v-model="winnersFontSize" v-bind:value="fontSize.class" name="winnersFontSize" id="winnersFontSize" style="color:black">
+            <option
+              v-for="(font, index) of fontSize" 
+              :key="index"
+              :value="font"
+              >          
+            {{font.size}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex">
+        <div class="form-item flex-1">
+          <label>Font color</label>
+          <input
+            id="fontColor"
+            type="color"
+            v-model="fontColor"
+            placeholder="Font Color"
+          />
+        </div>
+        <div class="form-item flex-1">
+          <label>Font Family</label>
+          <select v-model="family" v-bind:value="family.name" name="fontFamily" id="fontFamily" style="color:black">
+            <option
+              v-for="(font, index) of families" 
+              :key="index"
+              :value="font"
+              >          
+            {{font.name}}</option>
+          </select>
+        </div>
       </div>
 
       <div class="form-item">
@@ -216,18 +265,35 @@ let fonts = [
 	}
 ]; 
 
+let fontSize = [
+  { size: 1, class: 'text-xl' },
+  { size: 2, class: 'text-2xl' },
+  { size: 3, class: 'text-3xl' },
+  { size: 4, class: 'text-4xl' },
+  { size: 5, class: 'text-5xl' },
+  { size: 6, class: 'text-6xl' },
+  { size: 7, class: 'text-7xl' },
+  { size: 8, class: 'text-8xl' },
+  { size: 9, class: 'text-9xl' }
+];
+
 export default {
   name: "Setting",
   data: function () {
     return {
       family: { 
         name: 'Lato',
-        css: 'Lato:400',
-        weights: ['400']},
+        css: 'Lato:100,100i,300,300i,400,400i,700,700i,900,900i',
+        weights: ['100','300','400','700','900']},
       families: fonts,
       url: "",
       title: "",
-      fontColor: "",
+      fontSize: fontSize,
+      titleFontSize: {size: 6, class: 'text-6xl'},
+      prizesFontSize: {size: 3, class: 'text-3xl'},
+      rollerFontSize: {size: 5, class: 'text-5xl'},
+      winnersFontSize: {size: 1, class: 'text-xl'},
+      fontColor: "#ffffff",
       prizes: [{
         prizeImage: "",
         prizeUnits:"",
@@ -237,7 +303,7 @@ export default {
       source: null,
       validate: false,
       submitMessage: "",
-      hideTitleState: false,
+      hideTitleState: null,
       typeShowContestant: "show",
       backgroundImage:"",
       errors: {
@@ -302,6 +368,11 @@ export default {
             typeShowContestant: this.typeShowContestant,
             prizes:this.prizes,
             backgroundImage: this.backgroundImage, 
+            hideTitleState: this.hideTitleState,
+            titleFontSize: this.titleFontSize,
+            prizesFontSize: this.prizesFontSize,
+            rollerFontSize: this.rollerFontSize,
+            winnersFontSize: this.winnersFontSize,
           })
         );
         if(this.backgroundImage != ""){
@@ -379,12 +450,18 @@ export default {
       this.fontColor = setting.fontColor;
       this.family = setting.family;
       this.title = setting.title;
+      this.hideTitleState = setting.hideTitleState;
       this.prizes = setting.prizes;
       this.backgroundImage = setting.backgroundImage;
       this.typeShowContestant = setting.typeShowContestant;
       this.prizeDescription = setting.prizeDescription;
       this.prizeUnits = setting.prizeUnits;
       this.contestants = setting.contestants.join("\n");
+      this.titleFontSize = setting.titleFontSize;
+      this.prizesFontSize = setting.prizesFontSize;
+      this.rollerFontSize = setting.rollerFontSize;
+      this.winnersFontSize = setting.winnersFontSize;
+      this.hideTitleState = setting.hideTitleState;
     }
   },
 };
