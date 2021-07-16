@@ -181,13 +181,26 @@
         </div>
         <div class="flex-1 pl-10">
           <div class="form-item">
-            <label>prize amount</label>
-            <input
-              id="prizeUnits"
-              type="number"
-              v-model="prizes[index].prizeUnits"
-              placeholder="Prize amount in number"
-            />
+            <div class="flex">
+              <div class="flex-1">
+                <label>prize amount</label>
+                <input
+                  id="prizeUnits"
+                  type="number"
+                  v-model="prizes[index].prizeUnits"
+                  placeholder="Prize amount in number"
+                />
+              </div>
+              <div class="flex-1 pl-5">
+                <label>Unit</label>
+                <input
+                  id="prizeUnits"
+                  type="text"
+                  v-model="prizes[index].unitPrize"
+                  placeholder="Unit"
+                />
+              </div>
+            </div>
           
           </div>
           <div class="form-item">
@@ -370,6 +383,7 @@ export default {
       prizes: [{
         prizeImage: "",
         prizeUnits:"",
+        unitPrize:"",
         prizeDescription: "",
       }],
       contestants: "",

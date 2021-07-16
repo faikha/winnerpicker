@@ -12,7 +12,7 @@
           <div class="transform" :style="'--tw-translate-y:'+ position.prizesY +'rem; '+'--tw-translate-x:'+ position.prizesX +'rem; '">
             <img class="max-h-64 m-auto mb-8" :src="prizeImage" />
             <div v-if="prizeDescription" class="">
-              <div class="text-xl">{{ prizeUnits }} Units</div>
+              <div class="text-xl">{{ prizeUnits }} {{unitPrize}}</div>
               <div class="" v-bind:class="[prizesFontSize.class]">{{ prizeDescription }}</div>
             </div>
           </div>
@@ -95,6 +95,7 @@ export default {
       prizes: [],
       prizeImage: "",
       prizeUnits: "",
+      unitPrize: "",
       prizeDescription: "",
       typeShowContestant: "",
       contestants: [],
@@ -236,7 +237,7 @@ export default {
     nextPrize: function () {
       // hide next prize button
       this.hideNextPrize = true;
-      // show start button
+      // show start button bbbbbbbbb
       this.hideStartState = false;
       // set roller contestant name to empty
       this.name = null;
@@ -244,6 +245,11 @@ export default {
       this.count++;
       this.prizeImage = this.prizes[this.count].prizeImage;
       this.prizeUnits = this.prizes[this.count].prizeUnits;
+      if(this.prizes[this.count].unitPrize !== ""){
+        this.unitPrize = this.prizes[this.count].unitPrize;
+      } else {
+        this.unitPrize = 'Unit';
+      }
       this.prizeDescription = this.prizes[this.count].prizeDescription;
 
       this.winnerlist.push({winners : []}); 
@@ -277,6 +283,7 @@ export default {
         this.backgroundImage = setting.backgroundImage;
         this.prizeImage = setting.prizes[0].prizeImage;
         this.prizeUnits = setting.prizes[0].prizeUnits;
+        this.unitPrize = setting.prizes[0].unitPrize;
         this.prizeDescription = setting.prizes[0].prizeDescription;
         this.titleFontSize = setting.titleFontSize;
         this.prizesFontSize = setting.prizesFontSize;
