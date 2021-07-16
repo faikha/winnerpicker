@@ -1,44 +1,49 @@
 <template>
   <div>
     <link :href="`https://fonts.googleapis.com/css?family=${family.css}`" rel="stylesheet"/>
-
     <div class="pt-5" v-bind:style="{color: fontColor,fontFamily: family.name}">
       <div class="grid h-40 text-center">
         <!-- Title  -->
-        <div class="transform " :class="'translate-y-'+ titleTranslateY +' '+ titleFontSize.class" v-show="!hideTitleState" >{{ title }}</div>
+        <div class="transform " :style="'--tw-translate-y:'+ position.titleY +'rem'" :class="titleFontSize.class" v-show="!hideTitleState" >{{ title }}</div>
       </div>
 
       <div class="flex">
         <div class="flex-1 text-center">
-          <img class="max-h-64 m-auto mb-8" :src="prizeImage" />
-          <div v-if="prizeDescription" class="">
-            <div class="text-xl">{{ prizeUnits }} Units</div>
-            <div class="" v-bind:class="[prizesFontSize.class]">{{ prizeDescription }}</div>
+          <div class="transform" :style="'--tw-translate-y:'+ position.prizesY +'rem; '+'--tw-translate-x:'+ position.prizesX +'rem; '">
+            <img class="max-h-64 m-auto mb-8" :src="prizeImage" />
+            <div v-if="prizeDescription" class="">
+              <div class="text-xl">{{ prizeUnits }} Units</div>
+              <div class="" v-bind:class="[prizesFontSize.class]">{{ prizeDescription }}</div>
+            </div>
           </div>
         </div>
         <!-- roller  -->
         <div class="flex-1 pt-28 text-center" v-bind:style="{color: fontColor}">
-          <div v-if="name">
-            <div class="text-5xl">{{ splitedStr[0] }}</div>
-            <div class="text-2xl">{{ splitedStr[1] }}</div>
+          <div class="transform" :style="'--tw-translate-y:'+ position.rollerY +'rem; '+'--tw-translate-x:'+ position.rollerX +'rem; '">
+            <div v-if="name">
+              <div class="text-5xl">{{ splitedStr[0] }}</div>
+              <div class="text-2xl">{{ splitedStr[1] }}</div>
+            </div>
+            <div class="text-4xl" v-if="!name">...</div>
           </div>
-          <div class="text-4xl" v-if="!name">...</div>
         </div>
         <div class="flex-1">
-          <div class="ml-24" v-bind:class="[winnersFontSize.class]">LIST PEMENANG :</div>
-          <!-- List of pick winners -->
-          <div
-            class="ml-24"
-            v-show="winners.length"
-            v-for="(prize, index) of winnerlist"
-            :key="index"
-          >
-              <span class="text-xl">{{prizes[index].prizeDescription}}</span>
+          <div class="transform" :style="'--tw-translate-y:'+ position.winnersY +'rem; '+'--tw-translate-x:'+ position.winnersX +'rem; '">
+            <div class="ml-24" v-bind:class="[winnersFontSize.class]">LIST PEMENANG :</div>
+            <!-- List of pick winners -->
             <div
-              v-for="(winner, index) of winnerlist[index].winners"
+              class="ml-24"
+              v-show="winners.length"
+              v-for="(prize, index) of winnerlist"
               :key="index"
             >
-              {{index + 1}}. {{winner}}
+                <span class="text-xl">{{prizes[index].prizeDescription}}</span>
+              <div
+                v-for="(winner, index) of winnerlist[index].winners"
+                :key="index"
+              >
+                {{index + 1}}. {{winner}}
+              </div>
             </div>
           </div>
         </div>
@@ -75,15 +80,17 @@ Array.prototype.sum = function (prop) {
 
 export default {
   name: "WinnerPicker",
+  components:{
+  },
   data: function () {
     return {
       url: "",
       title: "",
       fontColor: "",
       titleFontSize: {},
+      position: null,
       prizesFontSize: {},
       winnersFontSize: {},
-      titleTranslateY: 10,
       family: {},
       prizes: [],
       prizeImage: "",
@@ -262,6 +269,7 @@ export default {
       if (localStorage.getItem("setting") !== null) {
         let setting = JSON.parse(localStorage.getItem("setting"));
         this.title = setting.title;
+        this.position = setting.position;
         this.fontColor = setting.fontColor;
         this.family = setting.family;
         this.prizes = setting.prizes;
@@ -273,6 +281,7 @@ export default {
         this.titleFontSize = setting.titleFontSize;
         this.prizesFontSize = setting.prizesFontSize;
         this.winnersFontSize = setting.winnersFontSize;
+
         if(setting.hideTitleState == 'true'){
           this.hideTitleState = true;
         } else {
@@ -301,12 +310,18 @@ export default {
         JSON.stringify({
           url: this.url,
           title: this.title,
+          position: this.position,
           fontColor: this.fontColor,
           family: this.family,
           contestants: this.contestants,
           typeShowContestant: this.typeShowContestant,
           prizes:this.prizes,
           backgroundImage: this.backgroundImage, 
+          hideTitleState: this.hideTitleState,
+          titleFontSize: this.titleFontSize,
+          prizesFontSize: this.prizesFontSize,
+          rollerFontSize: this.rollerFontSize,
+          winnersFontSize: this.winnersFontSize,
         })
       );
     },

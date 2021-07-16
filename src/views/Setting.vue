@@ -88,6 +88,69 @@
           </select>
         </div>
       </div>
+      <div class="flex">
+        <div class="form-item flex-1"></div>
+        <div class="form-item flex-1">
+          <label>Title Positition Y</label>
+          <input
+            id="titleY"
+            type="number"
+            v-model="position.titleY"
+            placeholder="Number"
+          />
+        </div>
+        <div class="form-item flex-1"></div>
+      </div>
+      <div class="flex">
+        <div class="form-item flex-1">
+          <label>Prizes Positition X</label>
+          <input
+            id="prizesX"
+            type="number"
+            v-model="position.prizesX"
+            placeholder="Number"
+          />
+          <label>Prizes Positition Y</label>
+          <input
+            id="prizesY"
+            type="number"
+            v-model="position.prizesY"
+            placeholder="Number"
+          />
+        </div>
+        <div class="form-item flex-1 pl-10">
+          <label>roller Positition X</label>
+          <input
+            id="rollerX"
+            type="number"
+            v-model="position.rollerX"
+            placeholder="Number"
+          />
+          <label>roller Positition Y</label>
+          <input
+            id="rollerY"
+            type="number"
+            v-model="position.rollerY"
+            placeholder="Number"
+          />
+        </div>
+        <div class="form-item flex-1 pl-10">
+          <label>Winners Positition X</label>
+          <input
+            id="winnersX"
+            type="number"
+            v-model="position.winnersX"
+            placeholder="Number"
+          />
+          <label>Winners Positition Y</label>
+          <input
+            id="winnersY"
+            type="number"
+            v-model="position.winnersY"
+            placeholder="Number"
+          />
+        </div>
+      </div>
 
       <div class="form-item">
         <label>Image Background</label>
@@ -288,6 +351,16 @@ export default {
       families: fonts,
       url: "",
       title: "",
+      position: {
+        titleX   : 0,
+        titleY   : 0,
+        prizesX  : 0,
+        prizesY  : 0,
+        rollerX  : 0,
+        rollerY  : 0,
+        winnersX : 0,
+        winnersY : 0,
+      },
       fontSize: fontSize,
       titleFontSize: {size: 6, class: 'text-6xl'},
       prizesFontSize: {size: 3, class: 'text-3xl'},
@@ -362,6 +435,7 @@ export default {
             url: this.url,
             title: this.title,
             fontColor: this.fontColor,
+            position: this.position,
             family: this.family,
             contestants: this.source,
             typeSource: this.typeSource,
@@ -448,6 +522,7 @@ export default {
       let setting = JSON.parse(localStorage.getItem("setting"));
       this.url = setting.url;
       this.fontColor = setting.fontColor;
+      this.position = setting.position;
       this.family = setting.family;
       this.title = setting.title;
       this.hideTitleState = setting.hideTitleState;
