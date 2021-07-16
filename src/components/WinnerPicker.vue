@@ -210,6 +210,11 @@ export default {
       if (this.winners.length - 1 == this.prizes.sum("prizeUnits") - 1) {
         this.hideNextPrize = true;
       }
+      
+      this.$confetti.start();
+      setTimeout(() => {
+        this.$confetti.stop();
+      }, 3000)
 
       console.log(this.winnerlist);
       this.startState = false;

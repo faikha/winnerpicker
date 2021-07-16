@@ -7,10 +7,13 @@ Is small **vue** application for pick the **random winner** from list of contest
 
  - set title
  - set description
+ - set font color
+ - set font family
+ - set background image
  - set prize (image, unit prize, description)
  - set list contestant (textarea)
  
- Set contestants in textarea must be each row one contestant name with comma "," to add additional information example : Name Contestant, Company Name
+ Set contestants in textarea must be each row for one contestant name with comma "," to add additional information, example : Name Contestant, Company Name
 
 ## License 
 
