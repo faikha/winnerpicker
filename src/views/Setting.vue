@@ -243,16 +243,52 @@
                 d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9.414l2.828-2.829 1.415 1.415L13.414 12l2.829 2.828-1.415 1.415L12 13.414l-2.828 2.829-1.415-1.415L10.586 12 7.757 9.172l1.415-1.415L12 10.586z"
               />
             </svg>
+            <span class="pl-4"><input type="checkbox" v-bind:id="'list'.index" v-model="prizeIndex" v-bind:value="index"><label>Roll this prize</label></span>
           </div>
         </div>
       </div>
 
       <div class="form-item mt-5">
-        <div>
+        <div v-for="(input, index) in contestants"
+        :key="`contestant-${index}`">
           <label>List of contestants</label>
-          <textarea class="list text-black" v-model="contestants" rows="10"></textarea>
+          <input type="checkbox" v-bind:id="'list'.index" v-model="listIndex" v-bind:value="index"><label>Use this list</label>
+          <textarea class="list text-black" v-model="contestants[index].list" rows="10"></textarea>
           <br /><small>Each record must be on a new line, write in this format: ( User, Company )</small>
-        </div>
+          <div class="svg-item">
+            <!--          Add Svg Icon-->
+            <svg
+              @click="addField(input, contestants)"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              class="ml-2 cursor-pointer"
+            >
+              <path fill="none" d="M0 0h24v24H0z" />
+              <path
+                fill="green"
+                d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4zm1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
+              />
+            </svg>
+            <!--          Remove Svg Icon-->
+            <svg
+              @click="removeField(index, contestants)"
+              v-show="contestants.length > 1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              class="ml-2 cursor-pointer  mb-5"
+            >
+              <path fill="none" d="M0 0h24v24H0z" />
+              <path
+                fill="#EC4899"
+                d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9.414l2.828-2.829 1.415 1.415L13.414 12l2.829 2.828-1.415 1.415L12 13.414l-2.828 2.829-1.415-1.415L10.586 12 7.757 9.172l1.415-1.415L12 10.586z"
+              />
+            </svg>
+          </div>
+        </div>  
       </div>
 
       <div v-if="errors.source.length" class="flex items-center bg-red-500 text-white text-sm font-bold px-4 py-3" role="alert">
@@ -268,6 +304,7 @@
       <br />
 
       <button class="btn btn-stop" @click="save">Save settings</button>
+      
     </div>
   </div>
 </template>
@@ -280,65 +317,36 @@ let fonts = [
 		weights: ['100','300','400','700','900']
 	},
 	{
-		name: 'Montserrat',
-		css: 'Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i',
-		weights: ['100','200','300','400','500','600','700','800','900']
-	},
-	{
-		name: 'Lora',
-		css: 'Lora:400,400i,700,700i',
-		weights: ['400', '700']
-	},
-	{
-		name: 'Oswald',
-		css: 'Oswald:200,300,400,500,600,700',
-		weights: ['200','300','400','500','600','700']
-	},
-	{
-		name: 'Dela Gothic One',
-		css: 'Dela+Gothic+One:400',
-		weights: ['400']
-	},
-	{
-		name: 'Staatliches',
-		css: 'Staatliches:400',
-		weights: ['400']
-	},
-	{
-		name: 'Bebas Neue',
-		css: 'Bebas+Neue:400',
-		weights: ['400']
-	},
-	{
-		name: 'Cinzel',
-		css: 'Cinzel:400',
-		weights: ['400']
-	},
-	{
-		name: 'Lobster',
-		css: 'Lobster:400',
-		weights: ['400']
-	},
-	{
-		name: 'Playfair Display',
-		css: 'Playfair+Display:400,400i,700,700i,900,900i',
-		weights: ['400','700','900']
-	},
-	{
-		name: 'Fira Mono',
-		css: 'Fira+Mono:400,500,700',
-		weights: ['400','500','700']
-	},
-	{
-		name: 'Pacifico',
-		css: 'Pacifico',
-		weights: ['400']
-	},
-	{
 		name: 'Source Sans Pro',
 		css: 'Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i',
 		weights: ['200','300','400','600','700','900']
-	}
+	},
+  {
+    name: 'Alfa Slab One',
+		css: 'Alfa+Slab+One:400,400i',
+		weights: ['400']
+  },
+  {
+    name: 'Balsamiq Sans',
+		css: 'Balsamiq+Sans:700',
+		weights: ['700']
+  },
+  {
+    name: 'Balsamiq Sans i',
+		css: 'Balsamiq+Sans:ital,wght@1:700',
+		weights: ['700']
+  },
+  {
+    name: 'Fjalla One',
+		css: 'Fjalla+One:400',
+		weights: ['400']
+  },
+  {
+    name: 'Fredoka One',
+		css: 'Fredoka+One:400',
+		weights: ['400']
+  },
+
 ]; 
 
 let fontSize = [
@@ -386,7 +394,18 @@ export default {
         unitPrize:"",
         prizeDescription: "",
       }],
-      contestants: "",
+      rollPrizes: [{
+        prizeImage: "",
+        prizeUnits:"",
+        unitPrize:"",
+        prizeDescription: "",
+      }],
+      contestants: [{
+        list: "",
+      }],
+      contestantList: "",
+      listIndex: [],
+      prizeIndex: [], 
       source: null,
       validate: false,
       submitMessage: "",
@@ -400,6 +419,10 @@ export default {
     };
   },
   methods: {
+    reload() {
+      
+    },
+
     validation() {
       //reset form errors
       this.resetFormErrors();
@@ -431,16 +454,36 @@ export default {
       fieldType.splice(index, 1);
     },
 
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    },
+
     //save data to localStorage
     save() {
       if (this.validation()) {
         //if contestant list is fill
         if (this.contestants) {
           // split data
-          let source = this.contestants.split("\n");
+          let source = [];
+          for(let i = 0; i < this.listIndex.length;i++){
+            var data = this.contestants[this.listIndex[i]].list.split("\n");
+            // source.push(data);
+            for(let i = 0 ; i < data.length; i++) {
+              source = [...source , data[i]]
+            }
+          }
           // get only is fill
           this.source = source.filter((item) => item != " " && item != "");
+          this.shuffleArray(this.source);        
         }
+        this.rollPrizes = [];
+        
+        for(let i = 0; i < this.prizeIndex.length; i++){
+          this.rollPrizes[i] = this.prizes[this.prizeIndex[i]];
+        }2
 
         //after validate data save to localStorage
         localStorage.setItem(
@@ -451,10 +494,14 @@ export default {
             fontColor: this.fontColor,
             position: this.position,
             family: this.family,
-            contestants: this.source,
+            contestants: this.contestants,
+            contestantList : this.source,
+            listIndex : this.listIndex,
+            prizeIndex : this.prizeIndex,
             typeSource: this.typeSource,
             typeShowContestant: this.typeShowContestant,
             prizes:this.prizes,
+            rollPrizes: this.rollPrizes,
             backgroundImage: this.backgroundImage, 
             hideTitleState: this.hideTitleState,
             titleFontSize: this.titleFontSize,
@@ -466,12 +513,20 @@ export default {
         if(this.backgroundImage != ""){
           document.body.style.backgroundImage = `url(${this.backgroundImage})`;
         }
-        console.log(localStorage.setting);
+        // console.log(localStorage.setting);
         
         // get submit message
-        this.submitMessage = "Your settings was succesfully saved!";
+        // this.submitMessage = "Your settings was succesfully saved!";
+        this.sendMessage();
       }
     },
+
+    sendMessage: async function() {
+      this.submitMessage = "Your settings was succesfully saved!";
+      await this.sleep(1500);
+      this.submitMessage = "";
+    },
+
     // reset form errors
     resetFormErrors() {
       this.errors = {
@@ -486,12 +541,12 @@ export default {
       } else {
         alert('file too big > 1Mb')
       } 
-      console.log(this.prizes);
+      // console.log(this.prizes);
     },
     createImageFile(file,index) {
       let reader = new FileReader();
       let vm = this;
-      console.log(vm);
+      // console.log(vm);
 
       reader.onload = (e) => {
         vm.prizes[index].prizeImage = e.target.result;
@@ -545,7 +600,11 @@ export default {
       this.typeShowContestant = setting.typeShowContestant;
       this.prizeDescription = setting.prizeDescription;
       this.prizeUnits = setting.prizeUnits;
-      this.contestants = setting.contestants.join("\n");
+      this.contestants = setting.contestants; 
+      this.contestantList = setting.contestantList;
+      this.listIndex = setting.listIndex;
+      this.prizeIndex = setting.prizeIndex;
+      this.rollPrizes = setting.rollPrizes;
       this.titleFontSize = setting.titleFontSize;
       this.prizesFontSize = setting.prizesFontSize;
       this.rollerFontSize = setting.rollerFontSize;

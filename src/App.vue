@@ -16,25 +16,19 @@
 
 export default {
   name: 'app',
-  // data: function() {
-  //   return {
-  //     family: {
-	// 			name: 'Oswald',
-  //       css: 'Oswald:200,300,400,500,600,700',
-  //       weights: ['200','300','400','500','600','700']
-	// 		}
-  //   }
-  // },
-  // created() {
-  //   // check if localStorage setting exist
-  //   if (localStorage.getItem("setting") !== null) {
-  //     let setting = JSON.parse(localStorage.getItem("setting"));
-  //     if(setting.family.name !== null){
-  //       this.family = setting.family;
-  //     }
-  //   }
-  // }
+  data: [],
+  created() {
+    // check if localStorage setting exist
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    if(params){
+      this.$router.push('/setting')
+      // console.log(params)
+    }
+  }
 }
+
+
 </script>
 
 <style>
