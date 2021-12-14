@@ -13,7 +13,7 @@
             <img class="max-h-64 m-auto mb-8" :src="prizeImage" />
             <div v-if="prizeDescription" class="">
               <div class="text-xl">{{ prizeUnits }} {{unitPrize}}</div>
-              <div class="" v-bind:class="[prizesFontSize.class]">{{ prizeDescription }}</div>
+              <!-- <div class="" v-bind:class="[prizesFontSize.class]">{{ prizeDescription }}</div> -->
             </div>
           </div>
         </div>
@@ -28,11 +28,12 @@
           </div>
         </div>
         <div class="flex-1">
-          <div class="transform" :style="'--tw-translate-y:'+ position.winnersY +'rem; '+'--tw-translate-x:'+ position.winnersX +'rem; '">
-            <div class="ml-24" v-bind:class="[winnersFontSize.class]">LIST PEMENANG :</div>
+          <div class="transform scrolthis" :style="'--tw-translate-y:'+ position.winnersY +'rem; '+'--tw-translate-x:'+ position.winnersX +'rem; '">
+            <div class="ml-24" >LIST PEMENANG :</div>
             <!-- List of pick winners -->
             <div
               class="ml-24"
+              v-bind:class="[winnersFontSize.class]"
               v-show="winners.length"
               v-for="(prize, index) of winnerlist"
               :key="index"
@@ -51,13 +52,13 @@
 
       <!-- Section button action  -->
       <div id="action">
-        <button v-show="!hideStartState" class="btn btn-start" @click="start">
+        <button v-show="!hideStartState" class="btn btn-start start" @click="start">
           <span v-show="!startState">Start</span>
           <span v-show="startState">Again</span>
         </button>
-        <button v-show="!hidePickerState" class="btn btn-stop" @click="stop">
+        <button v-show="!hidePickerState" class="btn btn-stop stop" @click="stop">
           Pick winner</button>
-        <button v-show="!hideNextPrize" class="btn" @click="nextPrize">
+        <button v-show="!hideNextPrize" class="btn next" @click="nextPrize">
           Next Prize</button>
         <button v-show="!hideDownloadState" class="btn btn-start" @click="download">
           Download</button>
@@ -92,6 +93,7 @@ export default {
       prizesFontSize: {},
       winnersFontSize: {},
       family: {},
+      allPrizes: [],
       prizes: [],
       prizeImage: "",
       prizeUnits: "",
@@ -99,6 +101,10 @@ export default {
       prizeDescription: "",
       typeShowContestant: "",
       contestants: [],
+      contestantList: [],
+      remainingContestants: [], 
+      listIndex: [],
+      prizeIndex: [],
       message: null,
       name: null,
       nameIndex: 0,
@@ -111,8 +117,11 @@ export default {
       hideNextPrize: true,
       hidePickAllWinner: false,
       hideTitleState: false,
+      useConfetti: true,
+      useStopSound: true,
       winners: [],
       winnerlist: [{winners:[]}],
+      allWinners: [],
       count: 0,
       textClass:"text-white",
       spinningSound: {file: new Audio('/spinning.mp3'), isPlaying:false},
@@ -167,16 +176,16 @@ export default {
         this.stopState = false;
         
         let i = 0;
-        i = this.getRandomInt(0,this.contestants.length-1);
+        i = this.getRandomInt(0,this.contestantList.length-1);
         //play the sound
         this.playSound(this.spinningSound);
 
         //start roller cycle
         this.interval = setInterval(() => {
-          this.name = this.contestants[i];
+          this.name = this.contestantList[i];
           this.splitedStr = this.name.split(",");
           this.nameIndex = i;
-          if (this.contestants.length - 1 == i) {
+          if (this.contestantList.length - 1 == i) {
             i = 0;
           } else {
             i++;
@@ -202,15 +211,17 @@ export default {
       
       this.interval = clearInterval(this.interval);
       // STOP SOUND
-      this.stopSound(this.spinningSound);
-      this.playSound(this.winningSound);
+      if(this.useStopSound){
+        this.stopSound(this.spinningSound);
+        this.playSound(this.winningSound);
+      }
       // if only start roller
       if (this.startState) {
         // push to winner list
         this.winners.push(this.name);
         this.winnerlist[this.count].winners.push(this.name);
         // remove from contestant list
-        this.contestants.splice(this.nameIndex, 1);
+        this.contestantList.splice(this.nameIndex, 1);
       }
 
       let c = parseInt(this.prizes[this.count].prizeUnits);
@@ -224,11 +235,12 @@ export default {
       if (this.winners.length - 1 == this.prizes.sum("prizeUnits") - 1) {
         this.hideNextPrize = true;
       }
-      
-      this.$confetti.start();
-      setTimeout(() => {
-        this.$confetti.stop();
-      }, 3000)
+      if(this.useConfetti){
+        this.$confetti.start();
+        setTimeout(() => {
+          this.$confetti.stop();
+        }, 3000)
+      }
 
       console.log(this.winnerlist);
       this.startState = false;
@@ -278,16 +290,18 @@ export default {
         this.position = setting.position;
         this.fontColor = setting.fontColor;
         this.family = setting.family;
-        this.prizes = setting.prizes;
+        this.prizes = setting.rollPrizes;
+        this.allPrizes = setting.prizes;
         this.url = setting.url;
         this.backgroundImage = setting.backgroundImage;
-        this.prizeImage = setting.prizes[0].prizeImage;
-        this.prizeUnits = setting.prizes[0].prizeUnits;
-        this.unitPrize = setting.prizes[0].unitPrize;
+        this.prizeImage = this.prizes[0].prizeImage;
+        this.prizeUnits = this.prizes[0].prizeUnits;
+        this.unitPrize = this.prizes[0].unitPrize;
         this.prizeDescription = setting.prizes[0].prizeDescription;
         this.titleFontSize = setting.titleFontSize;
         this.prizesFontSize = setting.prizesFontSize;
         this.winnersFontSize = setting.winnersFontSize;
+        this.prizeIndex = setting.prizeIndex;
 
         if(setting.hideTitleState == 'true'){
           this.hideTitleState = true;
@@ -304,25 +318,62 @@ export default {
         if (setting.typeSource === "external") {
           this.getSourceJson();
         } else {
+          this.contestantList = setting.contestantList;
           this.contestants = setting.contestants;
+          this.listIndex = setting.listIndex;
         }
         // if there is no data in settings
       } else {
         this.$router.push("setting");
       }
     },
+
+    removeWinner: function() {  
+      var allWinners = [];
+      for(let i = 0; i < this.winnerlist.length;i++){
+        var data = this.winnerlist[i].winners;
+        for(let i = 0 ; i < data.length; i++) {
+          allWinners = [...allWinners, data[i]];
+
+        }
+        
+      }
+
+      this.allWinners = allWinners;
+
+      for(let i = 0; i < this.contestants.length; i++){
+        const arrayContestants = this.contestants[i].list.split('\n');
+        this.remainingContestants[i] = arrayContestants.filter(function(val){
+          return allWinners.indexOf(val) === -1;
+        })
+
+        this.remainingContestants[i] = this.remainingContestants[i].join('\n');
+      }
+
+      for(let i = 0; i < this.remainingContestants.length;i++){
+        this.contestants[i].list = this.remainingContestants[i];
+      }
+
+      console.log(this.remainingContestants);
+    },
+
     resetStorageItem: function (){
+      this.removeWinner();
+
       localStorage.setItem(
         "setting",
         JSON.stringify({
-          url: this.url,
+          url: this.url, 
           title: this.title,
           position: this.position,
           fontColor: this.fontColor,
           family: this.family,
+          contestantList: this.contestantList,
           contestants: this.contestants,
+          listIndex: this.listIndex,
           typeShowContestant: this.typeShowContestant,
-          prizes:this.prizes,
+          prizes:this.allPrizes,
+          prizeIndex: this.prizeIndex,
           backgroundImage: this.backgroundImage, 
           hideTitleState: this.hideTitleState,
           titleFontSize: this.titleFontSize,
@@ -332,28 +383,55 @@ export default {
         })
       );
     },
+
+     sleep: function (time) {
+      return new Promise((resolve) => setTimeout(resolve, time));
+    },
+
+
+
     // get all winner
-    pickAllWinner: function() {
-      console.log(this.prizes.length);
-      for(let i = 0; i < this.prizes.length; i++){
-        if(i !== this.prizes.length-1){
-          this.winnerlist.push({winners : []});
+    pickAllWinner: async function() {
+      const startDOM = document.querySelector(".start");
+      const stopDOM = document.querySelector(".stop");
+      const nextDOM = document.querySelector(".next");
+
+      this.useConfetti = false;
+      this.useStopSound = false;
+
+      for(let i = 0; i < this.prizes.length; i++) {
+        // console.log(i)
+        
+        if( i != 0 && i < this.prizes.length){
+          await this.sleep(5000)
+          nextDOM.click();
+          console.log('next')
+        }
+
+        for(let j = 0; j< this.prizes[i].prizeUnits;j++){
+          // start
+          startDOM.click();
+          await this.sleep(500)
+          console.log('start click');
+          // startDOM.click();
+          // stop
+          if(j == this.prizes[i].prizeUnits - 1){
+            this.useStopSound = true;
+            this.useConfetti = true;
+          } else {
+            this.useStopSound = false;
+            this.useConfetti = false;
+          }
+
+          stopDOM.click();
+          // await this.sleep(500)
+          console.log('stop click');
+          // stopDOM.click();
         }
         
-        console.log(this.prizes[i].prizeUnits);
-        for(let j = 0; j < this.prizes[i].prizeUnits;j++){
-          //get winner name
-          let rand = this.getRandomInt(0,this.contestants.length-1);
-          let randContestant = this.contestants[rand];
-          let getName = randContestant;
-          this.winners.push(getName);
-          this.winnerlist[i].winners.push(getName);
-          this.contestants.splice(rand, 1);
-        }
+
       }
-      this.hideDownloadState = false;
-      this.hideStartState = true;
-      this.hidePickAllWinner = true;
+
     },
     // download file
     download: function() {
@@ -379,6 +457,7 @@ export default {
       let blob = new Blob([content], {type: "text/plain;charset=utf-8"});
       // use saveAs from fileSaver.js to save data as txt
       saveAs(blob, 'data.txt');
+
       this.resetStorageItem();
     },
 
@@ -399,16 +478,16 @@ export default {
         .then((response) => {
           return response.json();
         })
-        .then((data) => (this.contestants = data.map((item) => item.name)))
+        .then((data) => (this.contestantList = data.map((item) => item.name)))
         .catch((error) => (this.message = error));
     },
     // check contestants list
     _isFilled: function () {
-      if (!this.contestants.length) {
-        this.message = "List of contestants is empty!";
+      if (!this.contestantList.length) {
+        this.message = "List of contestantList is empty!";
         return false;
       }
-      if (this.contestants.length == 1) {
+      if (this.contestantList.length == 1) {
         this.message = "Contestants must be more then one!";
         return false;
       }
